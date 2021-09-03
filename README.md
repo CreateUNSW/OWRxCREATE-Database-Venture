@@ -1,5 +1,12 @@
 # OWRxCREATE-Database-Venture
 
+## Git - How to start
+1. Do not work on the main branch directly. Always work on branches other than the main branch.
+2. Git pull from main for latest changes on all files.
+3. Git push your changes to your working branch.
+4. Always submit a pull request if you want to merge the changes (from your working branch) into the main branch. 
+5. Someone else will review your pull request and approve it.
+
 ## Backend
 
 ### Virtual Environment
@@ -13,3 +20,5 @@ Further documentation on `pipenv` may be found [here](https://pipenv.pypa.io/en/
 
 ### Running the uvicorn server
 For now we're using FastAPI to build the API (surprise surprise). You run the server by running `uvicorn main:app --reload` in the `backend/app` directory. This will run the server on some localhost address like `http://127.0.0.1:8000`. The nifty Swagger docs page can then be accessed at `http://127.0.0.1:8000/docs`.
+
+## Frontend
