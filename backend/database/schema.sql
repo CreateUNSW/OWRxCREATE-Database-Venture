@@ -10,8 +10,8 @@ CREATE TABLE Person (
     password    varchar(12) NOT NULL,
     FirstName   varchar(30) NOT NULL,
     LastName    varchar(30),
-    Email       varchar(50) check (Email ~ '^[A-Za-z0-9]+[\._]?[A-Za-z0-9]+[@]\w+[.]\w{2,3}$') NOT NULL,
-    Phone       varchar(10) check (Phone ~ '[0-9]{10}'),
+    Email       varchar(50) CHECK (Email ~ '^[A-Za-z0-9]+[\._]?[A-Za-z0-9]+[@]\w+[.]\w{2,3}$') NOT NULL,
+    Phone       varchar(10) CHECK (Phone ~ '[0-9]{10}'),
     Picture     text,
     Role        RoleType NOT NULL,
     PRIMARY KEY (zID)
@@ -41,47 +41,73 @@ CREATE TABLE Item (
     PRIMARY KEY (SKU)
 );
 
-CREATE TABLE Location (
-    LocationID   serial,
-    Name         varchar(20) NOT NULL,
-    Description  text,
-    Picture      text,
-    PRIMARY KEY (LocationID),
-);
-
 CREATE TABLE ItemAt (
-    Item         integer NOT NULL,
-    Qty          integer NOT NULL,
-    Location     integer NOT NULL,
-    FOREIGN KEY Item REFERENCES Item(SKU),
-    FOREIGN KEY Location REFERENCES Location(Location),
+    SKU          integer,
+    Qty          integer CHECK (Qty >= 0),
+    LocationID       integer,
+    PRIMARY KEY (SKU, LocationID),
+    FOREIGN KEY SKU REFERENCES Item(SKU),
+    FOREIGN KEY LocationID REFERENCES Location(LocationID),
 );
 
 CREATE TABLE ItemTags (
-    Item         integer NOT NULL,
-    Tag          integer NOT NULL,
-    FOREIGN KEY Item REFERENCES Item(SKU),
+    SKU          integer,
+    Tag          integer,
+    PRIMARY KEY (SKU, Tag),
+    FOREIGN KEY SKU REFERENCES Item(SKU),
     FOREIGN KEY Tag REFERENCES Tag(TagID),
 );
 
 CREATE TABLE Approval (
     ApprovalID   serial,
-    ApproveBy    integer NOT NULL,
-    ApprovedOn   timestamp,
     Status       ApprovalStatus NOT NULL,
     Notes        text,
     PRIMARY KEY (ApprovalID),
-    FOREIGN KEY (ApproveBy) REFERENCES Person(zID)
+);
+
+CREATE TABLE ApprovedBy (
+    ApprovalID   integer,
+    PersonID     integer, 
+    ApprovedOn   timestamp,
+    PRIMARY KEY (ApprovalID, PersonID),
+    FOREIGN KEY (ApprovalID) REFERENCES Approval(ApprovalID),
+    FOREIGN KEY (PersonID) REFERENCES Person(zID) 
 );
 
 CREATE TABLE Checkout (
     CheckoutID   serial,
     Type         CheckoutType NOT NULL,
-    SKU          integer[] NOT NULL,
-    Qty          integer[] NOT NULL,
     RequstedBy   integer NOT NULL,
     Reason       text,
-    Status       CheckoutStatus NOT NULL
+    Status       CheckoutStatus NOT NULL,
+    LodgedOn     timestamp NOT NULL,
+    PRIMARY KEY (CheckoutID),
+    FOREIGN KEY (RequestedBy) REFERENCES Person(zID)
+);
+
+CREATE TABLE BorrowPeriod (
+    CheckoutID   integer,
+    BorrowPeriodStart timestamp NOT NULL,
+    BorrowPeriodEnd timestamp,
+    PRIMARY KEY (CheckoutID),
+    FOREIGN KEY (CheckoutID) REFERENCES Checkout(CheckoutID)
+);
+
+CREATE TABLE CheckoutSummary (
+    CheckoutID   integer,
+    SKU          integer,
+    Qty          integer CHECK (Qty >= 1),
+    PRIMARY KEY (CheckoutID, SKU),
+    FOREIGN KEY (CheckoutID) REFERENCES Checkout(CheckoutID),
+    FOREIGN KEY (SKU) REFERENCES Item(SKU)
+);
+
+CREATE TABLE CheckoutApprovals (
+    CheckoutID   integer,
+    ApprovalID   integer,
+    PRIMARY KEY (CheckoutID, ApprovalID),
+    FOREIGN KEY (CheckoutID) REFERENCES Checkout(CheckoutID),
+    FOREIGN KEY (ApprovalID) REFERENCES Approval(ApprovalID)
 );
 
 
