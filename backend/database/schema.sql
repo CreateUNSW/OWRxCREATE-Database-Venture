@@ -18,19 +18,11 @@ CREATE TABLE Person (
 );
 
 CREATE TABLE Location (
-    LocationID  serial,
+    id          serial,
     Name        varchar(20) NOT NULL,
     Description text,
     Picture     text,
-    PRIMARY KEY (LocationID)
-);
-
-CREATE TABLE Tag (
-    TagID       serial,
-    Name        varchar(20) NOT NULL,
-    Description text,
-    Colour      ColourType,
-    PRIMARY KEY (TagID)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE Item (
@@ -43,54 +35,56 @@ CREATE TABLE Item (
 
 CREATE TABLE ItemAt (
     SKU          integer,
+    LocationID   integer,
     Qty          integer CHECK (Qty >= 0),
-    LocationID       integer,
     PRIMARY KEY (SKU, LocationID),
     FOREIGN KEY SKU REFERENCES Item(SKU),
-    FOREIGN KEY LocationID REFERENCES Location(LocationID),
+    FOREIGN KEY LocationID REFERENCES Location(id),
+);
+
+CREATE TABLE Tag (
+    id          serial,
+    Name        varchar(20) NOT NULL,
+    Description text,
+    Colour      ColourType,
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE ItemTags (
     SKU          integer,
-    Tag          integer,
+    TagID        integer,
     PRIMARY KEY (SKU, Tag),
     FOREIGN KEY SKU REFERENCES Item(SKU),
-    FOREIGN KEY Tag REFERENCES Tag(TagID),
+    FOREIGN KEY Tag REFERENCES Tag(id),
 );
 
 CREATE TABLE Approval (
-    ApprovalID   serial,
+    id           serial,
     Status       ApprovalStatus NOT NULL,
-    Notes        text,
-    PRIMARY KEY (ApprovalID),
-);
-
-CREATE TABLE ApprovedBy (
-    ApprovalID   integer,
-    PersonID     integer, 
     ApprovedOn   timestamp,
-    PRIMARY KEY (ApprovalID, PersonID),
-    FOREIGN KEY (ApprovalID) REFERENCES Approval(ApprovalID),
-    FOREIGN KEY (PersonID) REFERENCES Person(zID) 
+    ApprovedBy   integer,
+    Notes        text,
+    PRIMARY KEY (id),
+    FOREIGN KEY (ApprovedBy) REFERENCES Person(zID) 
 );
 
 CREATE TABLE Checkout (
-    CheckoutID   serial,
+    id           serial,
     Type         CheckoutType NOT NULL,
     RequstedBy   integer NOT NULL,
     Reason       text,
     Status       CheckoutStatus NOT NULL,
     LodgedOn     timestamp NOT NULL,
-    PRIMARY KEY (CheckoutID),
+    PRIMARY KEY (id),
     FOREIGN KEY (RequestedBy) REFERENCES Person(zID)
 );
 
 CREATE TABLE BorrowPeriod (
     CheckoutID   integer,
-    BorrowPeriodStart timestamp NOT NULL,
-    BorrowPeriodEnd timestamp,
+    PeriodStart  timestamp NOT NULL,
+    PeriodEnd    timestamp,
     PRIMARY KEY (CheckoutID),
-    FOREIGN KEY (CheckoutID) REFERENCES Checkout(CheckoutID)
+    FOREIGN KEY (CheckoutID) REFERENCES Checkout(id)
 );
 
 CREATE TABLE CheckoutSummary (
@@ -98,7 +92,7 @@ CREATE TABLE CheckoutSummary (
     SKU          integer,
     Qty          integer CHECK (Qty >= 1),
     PRIMARY KEY (CheckoutID, SKU),
-    FOREIGN KEY (CheckoutID) REFERENCES Checkout(CheckoutID),
+    FOREIGN KEY (CheckoutID) REFERENCES Checkout(id),
     FOREIGN KEY (SKU) REFERENCES Item(SKU)
 );
 
@@ -106,9 +100,37 @@ CREATE TABLE CheckoutApprovals (
     CheckoutID   integer,
     ApprovalID   integer,
     PRIMARY KEY (CheckoutID, ApprovalID),
-    FOREIGN KEY (CheckoutID) REFERENCES Checkout(CheckoutID),
-    FOREIGN KEY (ApprovalID) REFERENCES Approval(ApprovalID)
+    FOREIGN KEY (CheckoutID) REFERENCES Checkout(id),
+    FOREIGN KEY (ApprovalID) REFERENCES Approval(id)
 );
 
+CREATE TABLE Orders (
+    id           serial,
+    LodgedBy     integer NOT NULL,
+    LodgedOn     timestamp NOT NULL,
+    Description  text,
+    FinalApprovalOn datetime,
+    PurchasedOn  datetime,
+    PRIMARY KEY (id),
+    FOREIGN KEY (LodgedBy) REFERENCES Person(zID)
+);
 
+CREATE TABLE OrderSummary (
+    OrderID      integer,
+    SKU          integer,
+    Qty          integer CHECK (Qty >= 1),
+    UnitPrice    float CHECK (UnitPrice >= 0),
+    Documentation text,
+    PRIMARY KEY (OrderID, SKU),
+    FOREIGN KEY (OrderID) REFERENCES Orders(id),
+    FOREIGN KEY (SKU) REFERENCES Item(SKU)
+);
+
+CREATE TABLE OrderApprovals (
+    OrderID      integer,
+    ApprovalID   integer,
+    PRIMARY KEY (OrderID, ApprovalID),
+    FOREIGN KEY (OrderID) REFERENCES Orders(id),
+    FOREIGN KEY (ApprovalID) REFERENCES Approval(id)
+);
 
