@@ -1,0 +1,104 @@
+from sqlalchemy import Column, Integer, String, Text ,ForeignKey, TIMESTAMP, DATETIME, Float
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.sql.schema import CheckConstraint
+
+Base = declarative_base()
+
+class Person(Base):
+    __tablename__ = "Person"
+    zID = Column(Integer, primary_key=True)
+    password = Column(String(12), nullable=False)
+    FirstName = Column(String(30), nullable = False)
+    LastName = Column(String(30))
+    Email = Column(String(50), nullable=False, CheckConstraint())   #constraints
+    Phone =  Column(String(10), CheckConstraint())  #constraint digits only
+    Picture = Column(Text)
+    Role = Column() #'Admin', 'Member'
+
+class Location(Base):
+    __tablename__ = "Location"
+    id = Column(Integer, primary_key=True)
+    Name = Column(String(20), nullable=False)
+    Description = Column(Text)
+    Picture = Column(Text)
+
+class Item(Base):
+    __tablename__ = "Item"
+    SKU = Column(Integer, primary_key=True)
+    Name = Column(String(50), nullable=False)
+    Image = Column(Text)
+    Description = Column(Text)
+
+class ItemAt(Base):
+    __tablename__ = "ItemAt"
+    SKU = Column(Integer, ForeignKey("Item.SKU"), primary_key=True)
+    LocationID = Column(Integer, ForeignKey("Location.id"), primary_key=True)
+    Qty = Column(Integer)   #constraint must be >= 0
+
+class Tag(Base):
+    __tablename__ = "Tag"
+    id = Column(Integer, primary_key=True)
+    Name = Column(String(20), nullable=False)
+    Description = Column(Text)
+    Colour = Column()   #'Red', 'Orange', 'Yellow', 'Blue', 'Green', 'Grey', 'Brown', 'Purple', 'Pink'
+
+class ItemTags(Base):
+    __tablename__ = "ItemTags"
+    SKU = Column(Integer, ForeignKey("Item.SKU"), primary_key=True)
+    TagID = Column(Integer, ForeignKey("Tag.id"), primary_key=True)
+
+class Approval(Base):
+    __tablename__ = "Approval"
+    id = Column(Integer, primary_key=True)
+    Status = Column()   #'PendingApproval', 'Approved', 'NotApproved'
+    ApprovedOn = Column(TIMESTAMP, nullable=False)
+    ApprovedBy = Column(Integer, ForeignKey("Person.zID"), nullable=False)
+    Notes = Column(Text)
+
+class Checkout(Base):
+    __tablename__ = "Checkout"
+    id = Column(Integer, primary_key=True)
+    Type = Column() #'Borrow', 'Use'
+    RequestedBy = Column(Integer, ForeignKey("Person.zID"), nullable=False)
+    Reason = Column(Text)
+    Status = Column()   #'Waiting', 'CheckedOut', 'Returned'
+    LodgedOn = Column(TIMESTAMP, nullable=False)
+
+class BorrowPeriod(Base):
+    __tablename__ = "BorrowPeriod"
+    CheckoutID = Column(Integer, ForeignKey("Checkout.id"), primary_key=True)
+    PeriodStart = Column(TIMESTAMP, nullable=False)
+    PeriodEnd = Column(TIMESTAMP)
+
+class CheckoutSummary(Base):
+    __tablename__ = "CheckoutSummary"
+    CheckoutID = Column(Integer, ForeignKey("Checkout.id"), primary_key=True)
+    SKU = Column(Integer, ForeignKey("Item.SKU"), primary_key=True)
+    Qty = Column(Integer)   #constraint must be >= 1
+
+class CheckoutApprovals(Base):
+    __tablename__ = "CheckoutApprovals"
+    CheckoutID = Column(Integer, ForeignKey("Checkout.id"), primary_key=True)
+    ApprovalID = Column(Integer, ForeignKey("Approval.id"), primary_key=True)
+    
+class Orders(Base):
+    __tablename__ = "Orders"
+    id = Column(Integer, primary_key=True)
+    LodgedBy = Column(Integer, ForeignKey("Person.zID"), nullable=False)
+    LodgedOn = Column(TIMESTAMP, nullable=False)
+    Description = Column(Text)
+    FinalApprovalOn = Column(DATETIME)
+    PurchasedOn = Column(DATETIME)
+
+class OrderSummary(Base):
+    __tablename__ = "OrderSummary"
+    OrderID = Column(Integer, ForeignKey("Orders.id"), primary_key=True)
+    SKU = Column(Integer, ForeignKey("Item.SKU"), primary_key=True)
+    Qty = Column(Integer, CheckConstraint("Qty >= 1"))   #constraint must be >= 1
+    UnitPrice = Column(Float, CheckConstraint("UnitPrice >= 0"))   #constraint must be >= 0
+    Documentation = Column(Text)
+
+class OrderApprovals(Base):
+    __tablename__ = "OrderApprovals"
+    OrderID = Column(Integer, ForeignKey("Order.id"), primary_key=True)
+    ApprovalID = Column(Integer, ForeignKey("Approval.id"), primary_key=True)
