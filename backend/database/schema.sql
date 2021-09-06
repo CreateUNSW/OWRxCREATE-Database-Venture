@@ -75,16 +75,10 @@ CREATE TABLE Checkout (
     Reason       text,
     Status       CheckoutStatus NOT NULL,
     LodgedOn     timestamp NOT NULL,
+    CheckedoutOn timestamp NOT NULL,
+    ReturnedOn   timestamp,      
     PRIMARY KEY (id),
     FOREIGN KEY (RequestedBy) REFERENCES Person(zID)
-);
-
-CREATE TABLE BorrowPeriod (
-    CheckoutID   integer,
-    PeriodStart  timestamp NOT NULL,
-    PeriodEnd    timestamp,
-    PRIMARY KEY (CheckoutID),
-    FOREIGN KEY (CheckoutID) REFERENCES Checkout(id)
 );
 
 CREATE TABLE CheckoutSummary (
