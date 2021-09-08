@@ -33,7 +33,7 @@ CREATE TABLE Item (
     description     text
 );
 
-CREATE TABLE ItemAt (
+CREATE TABLE item_at (
     sku             integer REFERENCES Item(sku),
     location_id     integer REFERENCES Location(id),
     qty             integer CHECK (qty >= 0),
@@ -47,7 +47,7 @@ CREATE TABLE Tag (
     colour          colour_type
 );
 
-CREATE TABLE ItemTags (
+CREATE TABLE item_tags (
     sku             integer REFERENCES Item(sku),
     tag_id          integer REFERENCES Tag(id),
     PRIMARY KEY (sku, tag_id)
@@ -72,20 +72,20 @@ CREATE TABLE Checkout (
     returned_on     timestamp     
 );
 
-CREATE TABLE CheckoutSummary (
+CREATE TABLE checkout_summary (
     checkout_id     integer REFERENCES Checkout(id),
     sku             integer REFERENCES Item(sku),
     qty             integer CHECK (qty >= 1),
     PRIMARY KEY (checkout_id, sku)
 );
 
-CREATE TABLE CheckoutApprovals (
+CREATE TABLE checkout_approvals (
     checkout_id     integer REFERENCES Checkout(id),
     ApprovalId      integer REFERENCES Approval(id),
     PRIMARY KEY (checkout_id, ApprovalId)
 );
 
-CREATE TABLE Orders (
+CREATE TABLE orders (
     id              serial PRIMARY KEY,
     lodged_by       integer REFERENCES Person(zid) NOT NULL,
     lodged_on       timestamp NOT NULL,
@@ -94,17 +94,17 @@ CREATE TABLE Orders (
     purchased_on    timestamp
 );
 
-CREATE TABLE OrderSummary (
-    order_id        integer REFERENCES Orders(id),
+CREATE TABLE order_summary (
+    order_id        integer REFERENCES orders(id),
     sku             integer REFERENCES Item(sku),
-    qty             integer CHECK (qty >= 1),
-    unit_price       money CHECK (unit_price >= 0),
+    qty             integer CHECK (qty >= 1) NOT NULL,
+    unit_price      money NOT NULL,
     documentation   text,
     PRIMARY KEY (order_id, sku)
 );
 
-CREATE TABLE OrderApprovals (
-    order_id        integer REFERENCES Orders(id),
+CREATE TABLE order_approvals (
+    order_id        integer REFERENCES orders(id),
     ApprovalId      integer REFERENCES Approval(id),
     PRIMARY KEY (order_id, ApprovalId)
 );
