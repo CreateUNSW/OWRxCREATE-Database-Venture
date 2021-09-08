@@ -1,8 +1,41 @@
-from sqlalchemy import Column, Integer, String, Text ,ForeignKey, TIMESTAMP, DATETIME, Float
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, TIMESTAMP, \
+    DATETIME, Float, Enum
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.schema import CheckConstraint
 
-Base = declarative_base()
+import enum
+
+Base = declarative_base
+
+# Enum's
+class RoleType(enum.Enum):
+    admin = 1
+    member = 2
+
+class ColourType(enum.Enum):
+    red = 1
+    orange = 2
+    yellow = 3
+    blue = 4
+    green = 5
+    grey = 6
+    brown = 7
+    purple = 8
+    pink = 9
+
+class CheckoutType(enum.Enum):
+    borrow = 1
+    use = 2
+
+class CheckoutStatus(enum.Enum):
+    waiting = 1
+    checkedOut = 2
+    returned = 3
+
+class ApprovalStatus(enum.Enum):
+    pendingApproval = 1
+    approved = 2
+    notApproved = 3
 
 class Person(Base):
     __tablename__ = "Person"
@@ -13,7 +46,7 @@ class Person(Base):
     Email = Column(String(50), nullable=False, CheckConstraint())   #constraints
     Phone =  Column(String(10), CheckConstraint())  #constraint digits only
     Picture = Column(Text)
-    Role = Column() #'Admin', 'Member'
+    Role = Column(Enum(RoleType)) #'Admin', 'Member'
 
 class Location(Base):
     __tablename__ = "Location"
@@ -40,7 +73,7 @@ class Tag(Base):
     id = Column(Integer, primary_key=True)
     Name = Column(String(20), nullable=False)
     Description = Column(Text)
-    Colour = Column()   #'Red', 'Orange', 'Yellow', 'Blue', 'Green', 'Grey', 'Brown', 'Purple', 'Pink'
+    Colour = Column(Enum(ColourType))   #'Red', 'Orange', 'Yellow', 'Blue', 'Green', 'Grey', 'Brown', 'Purple', 'Pink'
 
 class ItemTags(Base):
     __tablename__ = "ItemTags"
@@ -50,7 +83,7 @@ class ItemTags(Base):
 class Approval(Base):
     __tablename__ = "Approval"
     id = Column(Integer, primary_key=True)
-    Status = Column()   #'PendingApproval', 'Approved', 'NotApproved'
+    Status = Column(Enum(ApprovalStatus))   #'PendingApproval', 'Approved', 'NotApproved'
     ApprovedOn = Column(TIMESTAMP, nullable=False)
     ApprovedBy = Column(Integer, ForeignKey("Person.zID"), nullable=False)
     Notes = Column(Text)
@@ -61,7 +94,7 @@ class Checkout(Base):
     Type = Column() #'Borrow', 'Use'
     RequestedBy = Column(Integer, ForeignKey("Person.zID"), nullable=False)
     Reason = Column(Text)
-    Status = Column()   #'Waiting', 'CheckedOut', 'Returned'
+    Status = Column(Enum(CheckoutStatus))   #'Waiting', 'CheckedOut', 'Returned'
     LodgedOn = Column(TIMESTAMP, nullable=False)
 
 class BorrowPeriod(Base):
