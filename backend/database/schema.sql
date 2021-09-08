@@ -98,7 +98,7 @@ CREATE TABLE OrderSummary (
     order_id        integer REFERENCES Orders(id),
     sku             integer REFERENCES Item(sku),
     qty             integer CHECK (qty >= 1),
-    UnitPrice       float CHECK (UnitPrice >= 0),
+    unit_price       money CHECK (unit_price >= 0),
     documentation   text,
     PRIMARY KEY (order_id, sku)
 );
