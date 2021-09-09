@@ -89,7 +89,7 @@ CREATE TABLE order (
     lodged_by       varchar(7) REFERENCES person(zid) NOT NULL,
     lodged_on       timestamp NOT NULL,
     description     text,
-    approvaled_on   timestamp,
+    approved_on     timestamp,
     purchased_on    timestamp
 );
 
