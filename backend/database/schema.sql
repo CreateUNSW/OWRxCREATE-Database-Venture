@@ -54,7 +54,7 @@ CREATE TABLE item_tags (
 
 CREATE TABLE approval (
     id              serial PRIMARY KEY,
-    Status          approval_status NOT NULL,
+    status          approval_status NOT NULL,
     approved_on     timestamp,
     approved_by     varchar(7) REFERENCES person(zid) NOT NULL,
     notes           text
@@ -104,7 +104,7 @@ CREATE TABLE order_summary (
 
 CREATE TABLE order_approvals (
     order_id        integer REFERENCES orders(id),
-    approval_id      integer REFERENCES approval(id),
+    approval_id     integer REFERENCES approval(id),
     PRIMARY KEY (order_id, approval_id)
 );
 
