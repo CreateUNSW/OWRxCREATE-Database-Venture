@@ -4,9 +4,8 @@ create type checkout_type as enum ('borrow', 'use');
 create type checkout_status as enum ('waiting', 'checked_out', 'returned');
 create type approval_status as enum ('pending_approval', 'approved', 'not_approved');
 
--- Need to cast zid as text so regex match can work
 CREATE TABLE person (
-    zid             integer PRIMARY KEY,
+    zid             varchar(7) PRIMARY KEY,
     password        varchar(12) NOT NULL,
     first_name      varchar(30) NOT NULL,
     last_name       varchar(30),
@@ -14,7 +13,7 @@ CREATE TABLE person (
     phone_no        varchar(10),
     picture         text,
     role            role_type NOT NULL,
-    CONSTRAINT CK_zid CHECK (CAST(zid as text) ~* '^[1-9][0-9]{6}$'),
+    CONSTRAINT CK_zid CHECK (zid ~* '^[1-9][0-9]{6}$'),
     CONSTRAINT CK_email CHECK (email ~* '^[A-Za-z0-9]+[\._]?[A-Za-z0-9]+[@]\w+[.]\w{2,3}$'),
     CONSTRAINT CK_phone CHECK (phone_no ~* '[0-9]{10}')
 );
@@ -57,14 +56,14 @@ CREATE TABLE approval (
     id              serial PRIMARY KEY,
     Status          approval_status NOT NULL,
     approved_on     timestamp,
-    approved_by     integer REFERENCES person(zid) NOT NULL,
+    approved_by     varchar(7) REFERENCES person(zid) NOT NULL,
     notes           text
 );
 
 CREATE TABLE checkout (
     id              serial PRIMARY KEY, 
     type            checkout_type NOT NULL,
-    requested_by    integer REFERENCES person(zid) NOT NULL,
+    requested_by    varchar(7) REFERENCES person(zid) NOT NULL,
     reason          text,
     status          checkout_status NOT NULL,
     lodged_on       timestamp NOT NULL,
@@ -87,7 +86,7 @@ CREATE TABLE checkout_approvals (
 
 CREATE TABLE orders (
     id              serial PRIMARY KEY,
-    lodged_by       integer REFERENCES person(zid) NOT NULL,
+    lodged_by       varchar(7) REFERENCES person(zid) NOT NULL,
     lodged_on       timestamp NOT NULL,
     description     text,
     approvaled_on   timestamp,
