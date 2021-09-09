@@ -10,12 +10,12 @@ CREATE TABLE person (
     first_name      varchar(30) NOT NULL,
     last_name       varchar(30),
     email           varchar(50) NOT NULL,
-    phone_no        varchar(10),
+    phone           varchar(10),
     picture         text,
     role            role_type NOT NULL,
     CONSTRAINT CK_zid CHECK (zid ~* '^[1-9][0-9]{6}$'),
     CONSTRAINT CK_email CHECK (email ~* '^[A-Za-z0-9]+[\._]?[A-Za-z0-9]+[@]\w+[.]\w{2,3}$'),
-    CONSTRAINT CK_phone CHECK (phone_no ~* '[0-9]{10}')
+    CONSTRAINT CK_phone CHECK (phone ~* '[0-9]{10}')
 );
 
 CREATE TABLE location (
