@@ -24,6 +24,3 @@ def decodeToken(token: str):
         return decodedToken if decodedToken['expires'] >= time.time() else None
     except:
         return None
-
-t = createToken(5)
-print(decodeToken(t['accessToken']))
