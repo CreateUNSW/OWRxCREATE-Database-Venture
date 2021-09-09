@@ -5,12 +5,13 @@ from sqlalchemy import (
     Text,
     ForeignKey,
     TIMESTAMP,
-    DATETIME,
-    Float,
     Enum,
 )
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.sql.expression import false
 from sqlalchemy.sql.schema import CheckConstraint
+
+from sqlalchemy.dialects.postgresql import MONEY
 
 import enum
 
@@ -41,129 +42,128 @@ class CheckoutType(enum.Enum):
 
 class CheckoutStatus(enum.Enum):
     waiting = 1
-    checkedOut = 2
+    checked_out = 2
     returned = 3
 
 
 class ApprovalStatus(enum.Enum):
-    pendingApproval = 1
+    pending_approval = 1
     approved = 2
-    notApproved = 3
+    not_approved = 3
 
 
 class Person(Base):
-    __tablename__ = "Person"
-    zID = Column(
+    __tablename__ = "person"
+    zid = Column(
         String(7),
-        CheckConstraint("zID ~ '^[1-9][0-9]{6}$'"),
+        CheckConstraint("zid ~* '^[1-9][0-9]{6}$'"),
         primary_key=True,
         unique=True,
     )
     password = Column(String(12), nullable=False)
-    FirstName = Column(String(30), nullable=False)
-    LastName = Column(String(30))
-    Email = Column(String(50), nullable=False)
-    Phone = Column(String(10), CheckConstraint("Phone ~ '[0-9]{10}'"))
-    Picture = Column(Text)
-    Role = Column(Enum(RoleType))
+    first_name = Column(String(30), nullable=False)
+    last_name = Column(String(30))
+    email = Column(
+        String(50),
+        CheckConstraint("email ~* '^[A-Za-z0-9]+[\._]?[A-Za-z0-9]+[@]\w+[.]\w{2,3}$'"),
+        nullable=False,
+    )
+    phone = Column(String(10), CheckConstraint("phone ~* '[0-9]{10}'"))
+    picture = Column(Text)
+    role = Column(Enum(RoleType), nullable=False)
 
 
 class Location(Base):
-    __tablename__ = "Location"
+    __tablename__ = "location"
     id = Column(Integer, primary_key=True)
-    Name = Column(String(20), nullable=False)
-    Description = Column(Text)
-    Picture = Column(Text)
+    name = Column(String(20), nullable=False)
+    description = Column(Text)
+    picture = Column(Text)
 
 
 class Item(Base):
-    __tablename__ = "Item"
-    SKU = Column(Integer, primary_key=True)
-    Name = Column(String(50), nullable=False)
-    Image = Column(Text)
-    Description = Column(Text)
+    __tablename__ = "item"
+    sku = Column(Integer, primary_key=True)
+    name = Column(String(50), nullable=False)
+    image = Column(Text)
+    description = Column(Text)
 
 
 class ItemAt(Base):
-    __tablename__ = "ItemAt"
-    SKU = Column(Integer, ForeignKey("Item.SKU"), primary_key=True)
-    LocationID = Column(Integer, ForeignKey("Location.id"), primary_key=True)
-    Qty = Column(Integer, CheckConstraint("Qty >= 1"))
+    __tablename__ = "item_at"
+    sku = Column(Integer, ForeignKey("item.sku"), primary_key=True)
+    location_id = Column(Integer, ForeignKey("location.id"), primary_key=True)
+    qty = Column(Integer, CheckConstraint("Qty >= 0"))
 
 
 class Tag(Base):
-    __tablename__ = "Tag"
+    __tablename__ = "tag"
     id = Column(Integer, primary_key=True)
-    Name = Column(String(20), nullable=False)
-    Description = Column(Text)
-    Colour = Column(Enum(ColourType))
+    name = Column(String(20), nullable=False)
+    description = Column(Text)
+    colour = Column(Enum(ColourType))
 
 
 class ItemTags(Base):
-    __tablename__ = "ItemTags"
-    SKU = Column(Integer, ForeignKey("Item.SKU"), primary_key=True)
-    TagID = Column(Integer, ForeignKey("Tag.id"), primary_key=True)
+    __tablename__ = "item_tags"
+    sku = Column(Integer, ForeignKey("item.sku"), primary_key=True)
+    tag_id = Column(Integer, ForeignKey("tag.id"), primary_key=True)
 
 
 class Approval(Base):
-    __tablename__ = "Approval"
+    __tablename__ = "approval"
     id = Column(Integer, primary_key=True)
-    Status = Column(Enum(ApprovalStatus))
-    ApprovedOn = Column(TIMESTAMP, nullable=False)
-    ApprovedBy = Column(Integer, ForeignKey("Person.zID"), nullable=False)
-    Notes = Column(Text)
+    status = Column(Enum(ApprovalStatus))
+    approved_on = Column(TIMESTAMP, nullable=False)
+    approved_by = Column(String(7), ForeignKey("person.zid"), nullable=False)
+    notes = Column(Text)
 
 
 class Checkout(Base):
-    __tablename__ = "Checkout"
+    __tablename__ = "checkout"
     id = Column(Integer, primary_key=True)
-    Type = Column(Enum(CheckoutType))
-    RequestedBy = Column(Integer, ForeignKey("Person.zID"), nullable=False)
-    Reason = Column(Text)
-    Status = Column(Enum(CheckoutStatus))
-    LodgedOn = Column(TIMESTAMP, nullable=False)
-
-
-class BorrowPeriod(Base):
-    __tablename__ = "BorrowPeriod"
-    CheckoutID = Column(Integer, ForeignKey("Checkout.id"), primary_key=True)
-    PeriodStart = Column(TIMESTAMP, nullable=False)
-    PeriodEnd = Column(TIMESTAMP)
+    type = Column(Enum(CheckoutType))
+    requested_by = Column(String(7), ForeignKey("Person.zID"), nullable=False)
+    reason = Column(Text)
+    status = Column(Enum(CheckoutStatus))
+    lodged_on = Column(TIMESTAMP, nullable=False)
+    checkedout_on = Column(TIMESTAMP, nullable=False)
+    returned_on = Column(TIMESTAMP)
 
 
 class CheckoutSummary(Base):
-    __tablename__ = "CheckoutSummary"
-    CheckoutID = Column(Integer, ForeignKey("Checkout.id"), primary_key=True)
-    SKU = Column(Integer, ForeignKey("Item.SKU"), primary_key=True)
-    Qty = Column(Integer, CheckConstraint("Qty >= 1"))
+    __tablename__ = "checkout_summary"
+    checkout_id = Column(Integer, ForeignKey("checkout.id"), primary_key=True)
+    sku = Column(Integer, ForeignKey("item.sku"), primary_key=True)
+    qty = Column(Integer, CheckConstraint("qty >= 1"))
 
 
-class CheckoutApprovals(Base):
-    __tablename__ = "CheckoutApprovals"
-    CheckoutID = Column(Integer, ForeignKey("Checkout.id"), primary_key=True)
-    ApprovalID = Column(Integer, ForeignKey("Approval.id"), primary_key=True)
+class checkout_approval(Base):
+    __tablename__ = "checkout_approval"
+    checkout_id = Column(Integer, ForeignKey("checkout.id"), primary_key=True)
+    approval_id = Column(Integer, ForeignKey("approval.id"), primary_key=True)
 
 
 class Orders(Base):
-    __tablename__ = "Orders"
+    __tablename__ = "order_"
     id = Column(Integer, primary_key=True)
-    LodgedBy = Column(Integer, ForeignKey("Person.zID"), nullable=False)
-    LodgedOn = Column(TIMESTAMP, nullable=False)
-    Description = Column(Text)
-    FinalApprovalOn = Column(DATETIME)
-    PurchasedOn = Column(DATETIME)
+    lodged_by = Column(String(7), ForeignKey("person.zid"), nullable=False)
+    lodged_on = Column(TIMESTAMP, nullable=False)
+    description = Column(Text)
+    approved_on = Column(TIMESTAMP)
+    purchased_on = Column(TIMESTAMP)
 
 
 class OrderSummary(Base):
-    __tablename__ = "OrderSummary"
-    OrderID = Column(Integer, ForeignKey("Orders.id"), primary_key=True)
-    SKU = Column(Integer, ForeignKey("Item.SKU"), primary_key=True)
-    Qty = Column(Integer, CheckConstraint("Qty >= 1"))
-    UnitPrice = Column(Float, CheckConstraint("UnitPrice >= 0"))
-    Documentation = Column(Text)
+    __tablename__ = "order_summary"
+    order_id = Column(Integer, ForeignKey("order_.id"), primary_key=True)
+    sku = Column(Integer, ForeignKey("item.SKU"), primary_key=True)
+    qty = Column(Integer, CheckConstraint("qty >= 1"), nullable=False)
+    unit_price = Column(MONEY, CheckConstraint("UnitPrice >= 0"))
+    documentation = Column(Text)
 
 
-class OrderApprovals(Base):
-    __tablename__ = "OrderApprovals"
-    OrderID = Column(Integer, ForeignKey("Order.id"), primary_key=True)
-    ApprovalID = Column(Integer, ForeignKey("Approval.id"), primary_key=True)
+class OrderApproval(Base):
+    __tablename__ = "order_approval"
+    order_id = Column(Integer, ForeignKey("order_.id"), primary_key=True)
+    approval_id = Column(Integer, ForeignKey("approval.id"), primary_key=True)
