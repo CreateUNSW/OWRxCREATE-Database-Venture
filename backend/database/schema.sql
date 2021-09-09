@@ -80,7 +80,7 @@ CREATE TABLE checkout_summary (
 
 CREATE TABLE checkout_approval (
     checkout_id     integer REFERENCES checkout(id),
-    approval_id      integer REFERENCES approval(id),
+    approval_id     integer REFERENCES approval(id),
     PRIMARY KEY (checkout_id, approval_id)
 );
 
