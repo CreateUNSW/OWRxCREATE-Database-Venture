@@ -7,7 +7,6 @@ from sqlalchemy import (
     TIMESTAMP,
     Enum,
 )
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.expression import false
 from sqlalchemy.sql.schema import CheckConstraint
 
@@ -15,7 +14,7 @@ from sqlalchemy.dialects.postgresql import MONEY
 
 import enum
 
-Base = declarative_base
+from .database import Base
 
 # Enum's
 class RoleType(enum.Enum):
