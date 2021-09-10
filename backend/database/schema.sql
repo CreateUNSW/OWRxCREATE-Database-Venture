@@ -84,7 +84,7 @@ CREATE TABLE checkout_approval (
     PRIMARY KEY (checkout_id, approval_id)
 );
 
-CREATE TABLE order_ (
+CREATE TABLE orders (
     id              serial PRIMARY KEY,
     lodged_by       varchar(7) REFERENCES person(zid) NOT NULL,
     lodged_on       timestamp NOT NULL,
@@ -94,7 +94,7 @@ CREATE TABLE order_ (
 );
 
 CREATE TABLE order_summary (
-    order_id        integer REFERENCES order_(id),
+    order_id        integer REFERENCES orders(id),
     sku             integer REFERENCES item(sku),
     qty             integer CHECK (qty >= 1) NOT NULL,
     unit_price      money NOT NULL,
@@ -103,7 +103,7 @@ CREATE TABLE order_summary (
 );
 
 CREATE TABLE order_approval (
-    order_id        integer REFERENCES order_(id),
+    order_id        integer REFERENCES orders(id),
     approval_id     integer REFERENCES approval(id),
     PRIMARY KEY (order_id, approval_id)
 );
