@@ -144,7 +144,7 @@ class checkout_approval(Base):
 
 
 class Orders(Base):
-    __tablename__ = "order_"
+    __tablename__ = "orders"
     id = Column(Integer, primary_key=True)
     lodged_by = Column(String(7), ForeignKey("person.zid"), nullable=False)
     lodged_on = Column(TIMESTAMP, nullable=False)
@@ -155,7 +155,7 @@ class Orders(Base):
 
 class OrderSummary(Base):
     __tablename__ = "order_summary"
-    order_id = Column(Integer, ForeignKey("order_.id"), primary_key=True)
+    order_id = Column(Integer, ForeignKey("orders.id"), primary_key=True)
     sku = Column(Integer, ForeignKey("item.SKU"), primary_key=True)
     qty = Column(Integer, CheckConstraint("qty >= 1"), nullable=False)
     unit_price = Column(MONEY, CheckConstraint("UnitPrice >= 0"))
@@ -164,5 +164,5 @@ class OrderSummary(Base):
 
 class OrderApproval(Base):
     __tablename__ = "order_approval"
-    order_id = Column(Integer, ForeignKey("order_.id"), primary_key=True)
+    order_id = Column(Integer, ForeignKey("orders.id"), primary_key=True)
     approval_id = Column(Integer, ForeignKey("approval.id"), primary_key=True)
