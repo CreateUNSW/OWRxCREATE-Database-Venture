@@ -122,7 +122,7 @@ class Checkout(Base):
     __tablename__ = "checkout"
     id = Column(Integer, primary_key=True)
     type = Column(Enum(CheckoutType))
-    requested_by = Column(String(7), ForeignKey("Person.zID"), nullable=False)
+    requested_by = Column(String(7), ForeignKey("person.zid"), nullable=False)
     reason = Column(Text)
     status = Column(Enum(CheckoutStatus))
     lodged_on = Column(TIMESTAMP, nullable=False)
@@ -156,9 +156,9 @@ class Orders(Base):
 class OrderSummary(Base):
     __tablename__ = "order_summary"
     order_id = Column(Integer, ForeignKey("orders.id"), primary_key=True)
-    sku = Column(Integer, ForeignKey("item.SKU"), primary_key=True)
+    sku = Column(Integer, ForeignKey("item.sku"), primary_key=True)
     qty = Column(Integer, CheckConstraint("qty >= 1"), nullable=False)
-    unit_price = Column(MONEY, CheckConstraint("UnitPrice >= 0"))
+    unit_price = Column(MONEY, CheckConstraint("unit_price >= CAST('0' as MONEY)"))
     documentation = Column(Text)
 
 
