@@ -6,7 +6,7 @@ create type approval_status as enum ('pending_approval', 'approved', 'not_approv
 
 CREATE TABLE person (
     zid             varchar(7) PRIMARY KEY,
-    password        varchar(12) NOT NULL,
+    hashed_password varchar(12) NOT NULL,
     first_name      varchar(30) NOT NULL,
     last_name       varchar(30),
     email           varchar(50) NOT NULL,
