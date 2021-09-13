@@ -6,10 +6,10 @@ create type approval_status as enum ('pending_approval', 'approved', 'not_approv
 
 CREATE TABLE person (
     zid             varchar(7) PRIMARY KEY,
-    hashed_password varchar(12) NOT NULL,
-    first_name      varchar(30) NOT NULL,
-    last_name       varchar(30),
-    email           varchar(50) NOT NULL,
+    hashed_password text NOT NULL,
+    first_name      text NOT NULL,
+    last_name       text,
+    email           text NOT NULL,
     phone           varchar(10),
     picture         text,
     role            role_type NOT NULL,
@@ -20,14 +20,14 @@ CREATE TABLE person (
 
 CREATE TABLE location (
     id              serial PRIMARY KEY,
-    name            varchar(20) NOT NULL,
+    name            text NOT NULL,
     description     text,
     picture         text
 );
 
 CREATE TABLE item (
     sku             serial PRIMARY KEY,
-    name            varchar(50) NOT NULL,
+    name            text NOT NULL,
     image           text,
     description     text
 );
@@ -41,7 +41,7 @@ CREATE TABLE item_at (
 
 CREATE TABLE tag (
     id              serial PRIMARY KEY,
-    name            varchar(20) NOT NULL,
+    name            text NOT NULL,
     description     text,
     colour          colour_type
 );
