@@ -1,18 +1,19 @@
-# Just placeholder code for now, it's the FastAPI Hello World
-# example from their docs
+from fastapi import FastAPI, Depends
+from sqlalchemy.orm import Session
+from venture.database import SessionLocal
 
-from typing import Optional
+from venture.routers import auth
+from venture import models
 
-from fastapi import FastAPI
+from venture.database import get_db
 
-app = FastAPI()
+# uncomment below to create all tables in the postgres database
+# models.Base.metadata.create_all(bind=engine)
 
+app = FastAPI()  # run from backend directory: `uvicorn app.main:app --reload`
+app.include_router(auth.router)
 
 @app.get("/")
-def read_root():
-    return {"Hello": "World"}
+def read_users(db: Session = Depends(get_db)):
+    return db.query(models.Tag).first()  # Write your query here
 
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
