@@ -59,7 +59,7 @@ class Person(Base):
         primary_key=True,
         unique=True,
     )
-    password = Column(String(12), nullable=False)
+    hashed_password = Column(Text, nullable=False)
     first_name = Column(String(30), nullable=False)
     last_name = Column(String(30))
     email = Column(String(50), nullable=False)
