@@ -60,9 +60,9 @@ class Person(Base):
         unique=True,
     )
     hashed_password = Column(Text, nullable=False)
-    first_name = Column(String(30), nullable=False)
-    last_name = Column(String(30))
-    email = Column(String(50), nullable=False)
+    first_name = Column(Text, nullable=False)
+    last_name = Column(Text)
+    email = Column(Text, nullable=False)
     phone = Column(String(10), CheckConstraint("phone ~* '[0-9]{10}'"))
     picture = Column(Text)
     role = Column(Enum(RoleType), nullable=False)
@@ -71,7 +71,7 @@ class Person(Base):
 class Location(Base):
     __tablename__ = "location"
     id = Column(Integer, primary_key=True)
-    name = Column(String(20), nullable=False)
+    name = Column(Text, nullable=False)
     description = Column(Text)
     picture = Column(Text)
 
@@ -79,7 +79,7 @@ class Location(Base):
 class Item(Base):
     __tablename__ = "item"
     sku = Column(Integer, primary_key=True)
-    name = Column(String(50), nullable=False)
+    name = Column(Text, nullable=False)
     image = Column(Text)
     description = Column(Text)
 
@@ -94,7 +94,7 @@ class ItemAt(Base):
 class Tag(Base):
     __tablename__ = "tag"
     id = Column(Integer, primary_key=True)
-    name = Column(String(20), nullable=False)
+    name = Column(Text, nullable=False)
     description = Column(Text)
     colour = Column(Enum(ColourType))
 
