@@ -54,8 +54,8 @@ class ApprovalStatus(enum.Enum):
 class Person(Base):
     __tablename__ = "person"
     zid = Column(
-        String(7),
-        CheckConstraint("zid ~* '^[1-9][0-9]{6}$'"),
+        String(8),
+        CheckConstraint("zid ~* '^z[1-9][0-9]{6}$'"),
         primary_key=True,
         unique=True,
     )
@@ -114,7 +114,7 @@ class Approval(Base):
     id = Column(Integer, primary_key=True)
     status = Column(Enum(ApprovalStatus))
     approved_on = Column(TIMESTAMP, nullable=False)
-    approved_by = Column(String(7), ForeignKey("person.zid"), nullable=False)
+    approved_by = Column(String(8), ForeignKey("person.zid"), nullable=False)
     notes = Column(Text)
 
 
@@ -122,7 +122,7 @@ class Checkout(Base):
     __tablename__ = "checkout"
     id = Column(Integer, primary_key=True)
     type = Column(Enum(CheckoutType))
-    requested_by = Column(String(7), ForeignKey("person.zid"), nullable=False)
+    requested_by = Column(String(8), ForeignKey("person.zid"), nullable=False)
     reason = Column(Text)
     status = Column(Enum(CheckoutStatus))
     lodged_on = Column(TIMESTAMP, nullable=False)
@@ -146,7 +146,7 @@ class checkout_approval(Base):
 class Orders(Base):
     __tablename__ = "orders"
     id = Column(Integer, primary_key=True)
-    lodged_by = Column(String(7), ForeignKey("person.zid"), nullable=False)
+    lodged_by = Column(String(8), ForeignKey("person.zid"), nullable=False)
     lodged_on = Column(TIMESTAMP, nullable=False)
     description = Column(Text)
     approved_on = Column(TIMESTAMP)
