@@ -62,11 +62,7 @@ class Person(Base):
     password = Column(String(12), nullable=False)
     first_name = Column(String(30), nullable=False)
     last_name = Column(String(30))
-    email = Column(
-        String(50),
-        CheckConstraint("email ~* '^[A-Za-z0-9]+[\._]?[A-Za-z0-9]+[@]\w+[.]\w{2,3}$'"),
-        nullable=False,
-    )
+    email = Column(String(50), nullable=False)
     phone = Column(String(10), CheckConstraint("phone ~* '[0-9]{10}'"))
     picture = Column(Text)
     role = Column(Enum(RoleType), nullable=False)
