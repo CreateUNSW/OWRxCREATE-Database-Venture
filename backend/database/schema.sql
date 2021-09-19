@@ -5,7 +5,7 @@ create type checkout_status as enum ('waiting', 'checked_out', 'returned');
 create type approval_status as enum ('pending_approval', 'approved', 'not_approved');
 
 CREATE TABLE person (
-    zid             varchar(7) PRIMARY KEY,
+    zid             varchar(8) PRIMARY KEY,
     hashed_password text NOT NULL,
     first_name      text NOT NULL,
     last_name       text,
@@ -56,14 +56,14 @@ CREATE TABLE approval (
     id              serial PRIMARY KEY,
     status          approval_status NOT NULL,
     approved_on     timestamp,
-    approved_by     varchar(7) REFERENCES person(zid) NOT NULL,
+    approved_by     varchar(8) REFERENCES person(zid) NOT NULL,
     notes           text
 );
 
 CREATE TABLE checkout (
     id              serial PRIMARY KEY, 
     type            checkout_type NOT NULL,
-    requested_by    varchar(7) REFERENCES person(zid) NOT NULL,
+    requested_by    varchar(8) REFERENCES person(zid) NOT NULL,
     reason          text,
     status          checkout_status NOT NULL,
     lodged_on       timestamp NOT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE checkout_approval (
 
 CREATE TABLE orders (
     id              serial PRIMARY KEY,
-    lodged_by       varchar(7) REFERENCES person(zid) NOT NULL,
+    lodged_by       varchar(8) REFERENCES person(zid) NOT NULL,
     lodged_on       timestamp NOT NULL,
     description     text,
     approved_on     timestamp,
