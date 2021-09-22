@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-databaseName = "test"
+databaseName = "venture"
 dbUser = os.getenv('DATABASE_USERNAME')
 dbPass = os.getenv('DATABASE_PASSWORD')
 dbHost = "localhost"
@@ -28,6 +28,6 @@ def get_db():
         yield db
     finally:
         db.close()
-        
+
 # ORM models are inherited from this class
 Base = declarative_base()

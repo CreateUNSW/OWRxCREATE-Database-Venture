@@ -1,11 +1,10 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
-from venture.database import SessionLocal
+from database.database import SessionLocal
 
-from venture.routers import auth
-from venture import models
+from models import models
 
-from venture.database import get_db
+from database.database import get_db, engine
 
 # uncomment below to create all tables in the postgres database
 # models.Base.metadata.create_all(bind=engine)
