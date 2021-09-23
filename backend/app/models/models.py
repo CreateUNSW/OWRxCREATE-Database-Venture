@@ -14,7 +14,7 @@ from sqlalchemy.dialects.postgresql import MONEY
 
 import enum
 
-from .database import Base
+from database.database import Base
 
 # Enum's
 class RoleType(enum.Enum):
