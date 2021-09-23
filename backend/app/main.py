@@ -4,6 +4,8 @@ from database.database import SessionLocal
 
 from models import models
 
+from database.database import get_db
+
 # uncomment below to create all tables in the postgres database
 # models.Base.metadata.create_all(bind=engine)
 
