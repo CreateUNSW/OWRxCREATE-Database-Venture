@@ -16,4 +16,3 @@ app.include_router(auth.router)
 @app.get("/")
 def read_users(db: Session = Depends(get_db)):
     return db.query(models.Tag).first()  # Write your query here
-
