@@ -14,7 +14,7 @@ from sqlalchemy.dialects.postgresql import MONEY
 
 import enum
 
-from .database import Base
+from .database import Base, engine
 
 # Enum's
 class RoleType(enum.Enum):
@@ -166,3 +166,5 @@ class OrderApproval(Base):
     __tablename__ = "order_approval"
     order_id = Column(Integer, ForeignKey("orders.id"), primary_key=True)
     approval_id = Column(Integer, ForeignKey("approval.id"), primary_key=True)
+
+Base.metadata.create_all(engine)    
