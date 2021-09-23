@@ -32,7 +32,6 @@ class Person(BaseModel):
     email: str
     phone: str
     picture: str
-    role: str
 
 
 def createToken(userId: str):
@@ -62,18 +61,20 @@ def createPerson(person: Person, db: Session = Depends(get_db)):
     hashedPassword_hi = encrypt(person.password)
     newPerson = models.Person(
         zid = person.zid,
-        password = hashedPassword_hi,
+        password = hashedPassword_hi[:10],
         first_name = person.first_name,
         last_name = person.last_name,
         email = person.email,
         phone = person.phone,
         picture = person.picture,
-        role = person.role
+        role = models.RoleType(1)
     )
 
     db.add(newPerson)
     db.commit()
-    return newPerson
+
+
+    return person
 
 def getPersonByZid(zid, db: Session = Depends(get_db)):
     return db.query(models.Person).filter(models.Person.zid == zid).first()
