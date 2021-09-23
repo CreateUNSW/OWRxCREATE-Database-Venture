@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 import time
-# from jose import jwt
+from jose import jwt
 
 from fastapi import Depends, HTTPException, APIRouter
 
@@ -55,14 +55,14 @@ def decodeToken(token: str):
 @router.post('/person/', response_model=Person, tags=["auth"])
 def createPerson(person: Person, db: Session = Depends(get_db)):
     # Check if zid already registered
-    userExists = db.query(models.Person).filter(models.Person.zid == person.id).first()
+    userExists = db.query(models.Person).filter(models.Person.zid == person.zid).first()
     if userExists:
         raise HTTPException(status_code=400, detail="User already exists")
     
-    hashedPassword = encrypt(person.password)
+    hashedPassword_hi = encrypt(person.password)
     newPerson = models.Person(
         zid = person.zid,
-        password = hashedPassword,
+        password = hashedPassword_hi,
         first_name = person.first_name,
         last_name = person.last_name,
         email = person.email,
