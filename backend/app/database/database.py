@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-databaseName = "test"
+databaseName = "venture"
 dbUser = os.getenv('DATABASE_USERNAME')
 dbPass = os.getenv('DATABASE_PASSWORD')
 dbHost = "localhost"
