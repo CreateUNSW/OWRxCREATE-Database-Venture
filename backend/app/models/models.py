@@ -54,19 +54,15 @@ class ApprovalStatus(enum.Enum):
 class Person(Base):
     __tablename__ = "person"
     zid = Column(
-        String(7),
-        CheckConstraint("zid ~* '^[1-9][0-9]{6}$'"),
+        String(8),
+        CheckConstraint("zid ~* '^z[1-9][0-9]{6}$'"),
         primary_key=True,
         unique=True,
     )
-    password = Column(String(12), nullable=False)
-    first_name = Column(String(30), nullable=False)
-    last_name = Column(String(30))
-    email = Column(
-        String(50),
-        CheckConstraint("email ~* '^[A-Za-z0-9]+[\\._]?[A-Za-z0-9]+[@]\\w+[.]\\w{2,3}$'"),
-        nullable=False,
-    )
+    password = Column(Text, nullable=False)
+    first_name = Column(Text, nullable=False)
+    last_name = Column(Text)
+    email = Column(Text, nullable=False)
     phone = Column(String(10), CheckConstraint("phone ~* '[0-9]{10}'"))
     picture = Column(Text)
     role = Column(Enum(RoleType), nullable=False)
@@ -75,7 +71,7 @@ class Person(Base):
 class Location(Base):
     __tablename__ = "location"
     id = Column(Integer, primary_key=True)
-    name = Column(String(20), nullable=False)
+    name = Column(Text, nullable=False)
     description = Column(Text)
     picture = Column(Text)
 
@@ -83,7 +79,7 @@ class Location(Base):
 class Item(Base):
     __tablename__ = "item"
     sku = Column(Integer, primary_key=True)
-    name = Column(String(50), nullable=False)
+    name = Column(Text, nullable=False)
     image = Column(Text)
     description = Column(Text)
 
@@ -98,7 +94,7 @@ class ItemAt(Base):
 class Tag(Base):
     __tablename__ = "tag"
     id = Column(Integer, primary_key=True)
-    name = Column(String(20), nullable=False)
+    name = Column(Text, nullable=False)
     description = Column(Text)
     colour = Column(Enum(ColourType))
 
@@ -114,7 +110,7 @@ class Approval(Base):
     id = Column(Integer, primary_key=True)
     status = Column(Enum(ApprovalStatus))
     approved_on = Column(TIMESTAMP, nullable=False)
-    approved_by = Column(String(7), ForeignKey("person.zid"), nullable=False)
+    approved_by = Column(String(8), ForeignKey("person.zid"), nullable=False)
     notes = Column(Text)
 
 
@@ -122,7 +118,7 @@ class Checkout(Base):
     __tablename__ = "checkout"
     id = Column(Integer, primary_key=True)
     type = Column(Enum(CheckoutType))
-    requested_by = Column(String(7), ForeignKey("person.zid"), nullable=False)
+    requested_by = Column(String(8), ForeignKey("person.zid"), nullable=False)
     reason = Column(Text)
     status = Column(Enum(CheckoutStatus))
     lodged_on = Column(TIMESTAMP, nullable=False)
@@ -146,7 +142,7 @@ class checkout_approval(Base):
 class Orders(Base):
     __tablename__ = "orders"
     id = Column(Integer, primary_key=True)
-    lodged_by = Column(String(7), ForeignKey("person.zid"), nullable=False)
+    lodged_by = Column(String(8), ForeignKey("person.zid"), nullable=False)
     lodged_on = Column(TIMESTAMP, nullable=False)
     description = Column(Text)
     approved_on = Column(TIMESTAMP)
