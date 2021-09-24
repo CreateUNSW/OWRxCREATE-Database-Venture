@@ -10,6 +10,8 @@ sqlalchemy = "*"
 psycopg2 = "*"
 python-dotenv = "*"
 python-jose = "*"
+pytest = "*"
+requests = "*"
 
 [dev-packages]
 

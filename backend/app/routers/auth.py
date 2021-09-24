@@ -5,15 +5,18 @@ from jose import jwt
 
 from fastapi import Depends, HTTPException, APIRouter
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/auth",
+    tags=["auth"],
+)
 
 # db
-from models import models
+from models import models, pydantic
 from database.database import get_db
 from sqlalchemy.orm import Session
 
 # Password hashing
-from hashlib import sha256
+from hashlib import new, sha256
 
 # Environment variables
 load_dotenv()
@@ -21,18 +24,6 @@ load_dotenv()
 expiryTimeMinutes = float(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES'))
 secretJWT = os.getenv('JWT_SECRET')
 algorithmJWT = os.getenv('JWT_ALGORITHM')
-
-from pydantic import BaseModel
-# Pydantic Models for route response
-class Person(BaseModel):
-    zid: str
-    password: str
-    first_name: str
-    last_name: str
-    email: str
-    phone: str
-    picture: str
-
 
 def createToken(userId: str):
     payload = {
@@ -51,17 +42,17 @@ def decodeToken(token: str):
         return None
 
 # Add new person to the database
-@router.post('/person/', response_model=Person, tags=["auth"])
-def createPerson(person: Person, db: Session = Depends(get_db)):
+@router.post('/person/', response_model=pydantic.Person)
+def createPerson(person: pydantic.PersonRegister, db: Session = Depends(get_db)):
     # Check if zid already registered
     userExists = db.query(models.Person).filter(models.Person.zid == person.zid).first()
     if userExists:
         raise HTTPException(status_code=400, detail="User already exists")
     
-    hashedPassword_hi = encrypt(person.password)
+    hashedPassword = encrypt(person.password)
     newPerson = models.Person(
         zid = person.zid,
-        password = hashedPassword_hi[:10],
+        password = hashedPassword,
         first_name = person.first_name,
         last_name = person.last_name,
         email = person.email,
@@ -73,7 +64,7 @@ def createPerson(person: Person, db: Session = Depends(get_db)):
     db.add(newPerson)
     db.commit()
 
-
+    # Without the password (handled by person response_model)
     return person
 
 def getPersonByZid(zid, db: Session = Depends(get_db)):
