@@ -8,8 +8,8 @@ from fastapi import Depends, HTTPException, APIRouter
 router = APIRouter()
 
 # db
-from .. import models
-from ..database import get_db
+from models import models
+from database.database import get_db
 from sqlalchemy.orm import Session
 
 # Password hashing
