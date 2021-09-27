@@ -4,12 +4,13 @@ from pydantic import (
     BaseModel,
     constr,
     PositiveInt,
-    NonNegativeInt
+    NonNegativeInt,
+    Json
 )
+from sqlalchemy.sql.sqltypes import JSON
 
 from . import models
 
-import re
 import datetime
 
 #################################################################################
@@ -22,7 +23,7 @@ class Person(BaseModel):
     phone: str
     picture: str
 
-class PersonRegister(BaseModel):
+class RegisterRequest(BaseModel):
     zid: constr(min_length=8, max_length=8)
     password: str
     first_name: constr(min_length=1)
@@ -31,6 +32,18 @@ class PersonRegister(BaseModel):
     phone: constr(regex=r'[0-9]{10}')
     picture: Optional[str]
     role: Optional[models.RoleType]
+
+class PersonCredentials(BaseModel):
+    zid: constr(min_length=8, max_length=8)
+    password: str
+
+class LoginRequest(BaseModel):
+    zid: constr(min_length=8, max_length=8)
+    password: str
+
+class LoginResponse(BaseModel):
+    success: bool
+    token: str
 
 #################################################################################
 
