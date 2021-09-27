@@ -6,11 +6,14 @@ import jwt
 
 from fastapi import Depends, HTTPException, APIRouter
 from fastapi.security import HTTPBearer, HTTPBasicCredentials
+from pydantic.networks import HttpUrl
 
 router = APIRouter(
     prefix="/auth",
     tags=["auth"],
 )
+
+from typing import List
 
 # db
 from models import models, schema
@@ -18,7 +21,7 @@ from database.database import get_db
 from sqlalchemy.orm import Session
 
 # Password hashing
-from hashlib import new, sha256
+from hashlib import sha256
 
 # Environment variables
 load_dotenv()
@@ -60,7 +63,8 @@ def decodeToken(token: str):
 # If the token is invalid, an exception is created and sent
 # to the client (via the decodeToken function)
 def authorise(token: HTTPBasicCredentials = Depends(security)):
-    return decodeToken(token.credentials)
+    # token form: "scheme": 'Bearer', credentials='xxx'
+    return decodeToken(token.credentials)['zid']
 
 
 # Default role for a new user is 'member'
@@ -107,18 +111,61 @@ def login(person: schema.LoginRequest, db: Session = Depends(get_db)):
 
     raise HTTPException(status_code=401, detail="Invalid username or password")
 
+# User needs to be logged in and provide the correct password
+# to successfully delete their account
+# TODO: Need to update this to account for what happens to a users orders, inventory
+#       etc. (e.g. ask them to return any borrowed items before deleting account).
+#       Plus need to account for type of delete (cascade?)
+@router.delete('/')
+def removeUser(password: str, zid: str = Depends(authorise), db: Session = Depends(get_db)):
+    # Don't user user provide zid as they'll be able to delete another person's account
+    user = authenticateUser(schema.PersonCredentials(zid=zid, password=password), db)
+
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+    
+    db.delete(user)
+    db.commit()
+
+# TODO: Returns a list of users in the system - available to admins only
+@router.get('/', response_model=List[schema.Person])
+def getUsers(zid: str = Depends(authorise), db: Session = Depends(get_db)):
+    userRole = getRoleByZid(zid, db)
+    if userRole != models.RoleType.admin:
+        raise HTTPException(status_code=403, detail="RoleType not admin")
+
+    try:
+        return db.query(models.Person).add_columns(
+            models.Person.zid,
+            models.Person.first_name,
+            models.Person.last_name,
+            models.Person.email,
+            models.Person.phone,
+            models.Person.picture,
+            models.Person.role
+        ).all()
+    except:
+        return []
+
+    
+
+####################################################################################
+
 # Database returns None if user credentials do not match
-def authenticateUser(person: schema.PersonCredentials, db: Session = Depends(get_db)):
+def authenticateUser(person: schema.PersonCredentials, db: Session):
     return db.query(models.Person).filter(
                 models.Person.zid == person.zid,
                 models.Person.password == encrypt(person.password)
             ).first()
 
-# Test protected route
-@router.get('/secret')
-def secret(authorise: str = Depends(authorise)):
-    return "secret resource"
-
 # Encrypt user password and return the hexadecimal representation
 def encrypt(password) :
     return sha256(password.encode()).hexdigest()
+
+def getRoleByZid(zid, db: Session):
+    try:
+        return db.query(models.Person).filter(
+            models.Person.zid == zid
+        ).first().role
+    except:
+        return None
