@@ -28,6 +28,8 @@ secretJWT = os.getenv('JWT_SECRET')
 algorithmJWT = os.getenv('JWT_ALGORITHM')
 security = HTTPBearer()
 
+# Creates a JWT token containing a payload combination of the user zid
+# and expiry time of the token
 def createToken(zid: str):
     payload = {
         "zid": zid,
@@ -37,7 +39,8 @@ def createToken(zid: str):
     token = jwt.encode(payload, secretJWT, algorithm=algorithmJWT)
     return token
 
-
+# Given a JWT token, verifies the token against the secret key and
+# returns the payload if it hasn't expired
 def decodeToken(token: str):
     try:
         decodedToken = jwt.decode(token, secretJWT, algorithms=algorithmJWT)
@@ -52,12 +55,15 @@ def decodeToken(token: str):
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid Token")
 
+# Dependency injection for routes that need to be protected.
+# Automatically parses the header for an authorisation token.
+# If the token is invalid, an exception is created and sent
+# to the client (via the decodeToken function)
 def authorise(token: HTTPBasicCredentials = Depends(security)):
-    decoded = decodeToken(token.credentials)
-    if decoded:
-        return token
+    return decodeToken(token.credentials)
 
-# Add new person to the database
+
+# Default role for a new user is 'member'
 @router.post('/register/', response_model=schema.Person)
 def register(person: schema.RegisterRequest, db: Session = Depends(get_db)):
     # Check if zid already registered
@@ -87,6 +93,7 @@ def register(person: schema.RegisterRequest, db: Session = Depends(get_db)):
     except:
         raise HTTPException(status_code=402, detail="ERROR")
 
+# Passes JWT token in response once a user is successfully logged in
 @router.post('/login', response_model=schema.LoginResponse)
 def login(person: schema.LoginRequest, db: Session = Depends(get_db)):
     # Ensure zid and password correct
@@ -100,6 +107,7 @@ def login(person: schema.LoginRequest, db: Session = Depends(get_db)):
 
     raise HTTPException(status_code=401, detail="Invalid username or password")
 
+# Database returns None if user credentials do not match
 def authenticateUser(person: schema.PersonCredentials, db: Session = Depends(get_db)):
     return db.query(models.Person).filter(
                 models.Person.zid == person.zid,
