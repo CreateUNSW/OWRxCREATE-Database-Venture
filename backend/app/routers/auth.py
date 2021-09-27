@@ -13,7 +13,7 @@ router = APIRouter(
 )
 
 # db
-from models import models, pydantic
+from models import models, schema
 from database.database import get_db
 from sqlalchemy.orm import Session
 
@@ -58,8 +58,8 @@ def authorise(token: HTTPBasicCredentials = Depends(security)):
         return token
 
 # Add new person to the database
-@router.post('/register/', response_model=pydantic.Person)
-def register(person: pydantic.RegisterRequest, db: Session = Depends(get_db)):
+@router.post('/register/', response_model=schema.Person)
+def register(person: schema.RegisterRequest, db: Session = Depends(get_db)):
     # Check if zid already registered
     userExists = db.query(models.Person).filter(
         models.Person.zid == person.zid
@@ -87,8 +87,8 @@ def register(person: pydantic.RegisterRequest, db: Session = Depends(get_db)):
     except:
         raise HTTPException(status_code=402, detail="ERROR")
 
-@router.post('/login', response_model=pydantic.LoginResponse)
-def login(person: pydantic.LoginRequest, db: Session = Depends(get_db)):
+@router.post('/login', response_model=schema.LoginResponse)
+def login(person: schema.LoginRequest, db: Session = Depends(get_db)):
     # Ensure zid and password correct
     user = authenticateUser(person, db)
 
@@ -100,7 +100,7 @@ def login(person: pydantic.LoginRequest, db: Session = Depends(get_db)):
 
     raise HTTPException(status_code=401, detail="Invalid username or password")
 
-def authenticateUser(person: pydantic.PersonCredentials, db: Session = Depends(get_db)):
+def authenticateUser(person: schema.PersonCredentials, db: Session = Depends(get_db)):
     return db.query(models.Person).filter(
                 models.Person.zid == person.zid,
                 models.Person.password == encrypt(person.password)
