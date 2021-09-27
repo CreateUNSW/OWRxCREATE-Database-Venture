@@ -1,20 +1,23 @@
-import main
-
 from fastapi.testclient import TestClient
+import main
 client = TestClient(main.app)
 
 def test_create_basic_user():
+    # Register a sample user
+    zid = "z5555555"
+    password = "secretpassword"
+
     response = client.post(
-        "/auth/person/",
+        "/auth/register/",
         json={
-            "zid": "z5555555",
-            "password": "secretpassword",
+            "zid": zid,
+            "password": password,
             "first_name": "First",
             "last_name": "Last",
             "email": "firstlast@gmail.com",
             "phone": "0444444444",
             "picture": "picture.jpeg",
-            "role": "admin"
+            "role": 1
         }
     )
 
