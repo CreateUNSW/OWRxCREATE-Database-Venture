@@ -14,6 +14,7 @@ pytest = "*"
 requests = "*"
 pyjwt = "*"
 jwt = "*"
+starlette = "*"
 
 [dev-packages]
 
