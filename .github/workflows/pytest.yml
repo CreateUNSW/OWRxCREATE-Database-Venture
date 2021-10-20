@@ -1,39 +1,36 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
-name: Python application
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+# .github/workflows/app.yaml
+name: PyTest
+on: push
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.9
-    - name: Install pipenv
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      # Setup Python (faster than using Python container)
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: Install pipenv
         run: |
           python -m pip install --upgrade pipenv wheel
-    - id: cache-pipenv
-      uses: actions/cache@v1
-      with:
-        path: ~/.local/share/virtualenvs
-        key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
-    - name: Install dependencies
-      if: steps.cache-pipenv.outputs.cache-hit != 'true'
-      run: |
-        pipenv install --deploy --dev
-      working-directory: backend
-    - name: Test with pytest
-      run: |
-        python -m pytest tests
-      working-directory: backend/app
+      - id: cache-pipenv
+        uses: actions/cache@v1
+        with:
+          path: ~/.local/share/virtualenvs
+          key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
+
+      - name: Install dependencies
+        if: steps.cache-pipenv.outputs.cache-hit != 'true'
+        run: |
+          pipenv install --deploy --dev
+      - name: Run test suite
+        run: |
+          python -m pytest tests
+        working-directory: backend/app
