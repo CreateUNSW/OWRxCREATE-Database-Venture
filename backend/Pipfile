@@ -4,19 +4,22 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-fastapi = {extras = ["testclient"], version = "*"}
 uvicorn = "*"
-sqlalchemy = "*"
-psycopg2 = "*"
+SQLAlchemy = "*"
 python-dotenv = "*"
 python-jose = "*"
 pytest = "*"
 requests = "*"
-pyjwt = "*"
+PyJWT = "*"
 jwt = "*"
 starlette = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 
 [requires]
 python_version = "3.8"
+
+[packages.fastapi]
+extras = [ "testclient",]
+version = "*"
