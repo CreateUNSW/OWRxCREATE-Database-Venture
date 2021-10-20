@@ -25,10 +25,8 @@ jobs:
         python -m pip install --upgrade pipenv
         pipenv update
         pipenv install
-        
-        pip install flake8 pytest
       working-directory: backend
     - name: Test with pytest
       run: |
-        python -m pytest tests
+        pytest
       working-directory: backend/app

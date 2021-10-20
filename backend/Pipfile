@@ -8,7 +8,6 @@ uvicorn = "*"
 SQLAlchemy = "*"
 python-dotenv = "*"
 python-jose = "*"
-pytest = "*"
 requests = "*"
 PyJWT = "*"
 jwt = "*"
@@ -16,6 +15,7 @@ starlette = "*"
 psycopg2-binary = "*"
 
 [dev-packages]
+pytest = "*"
 
 [requires]
 python_version = "3.8"
