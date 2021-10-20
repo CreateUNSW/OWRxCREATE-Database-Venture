@@ -30,6 +30,7 @@ jobs:
         if: steps.cache-pipenv.outputs.cache-hit != 'true'
         run: |
           pipenv install --deploy --dev
+        working-directory: backend
       - name: Run test suite
         run: |
           python -m pytest tests
