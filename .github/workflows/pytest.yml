@@ -30,6 +30,8 @@ jobs:
         if: steps.cache-pipenv.outputs.cache-hit != 'true'
         run: |
           pipenv install --deploy --dev
+
+          pip install flake8 pytest
         working-directory: backend
       - name: Run test suite
         run: |
