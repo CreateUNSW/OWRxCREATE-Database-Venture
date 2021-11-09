@@ -1,0 +1,56 @@
+.app-nav {
+    background-color: $primary;
+    overflow: hidden;
+    .App-logo {
+        float: left;
+        height: 60px;
+        padding: 0.25rem 1rem;
+        margin: auto;
+        pointer-events: none;
+        @media (prefers-reduced-motion: no-preference) {
+              animation: App-logo-spin infinite 20s linear;
+        }
+    }
+    @keyframes App-logo-spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    a {
+        float: left;
+        display: block;
+        padding: 1.5rem;
+        background-color: $primary;
+        -webkit-transition: 0.25s;
+        transition: 0.25s;
+        text-decoration: none;
+        color: $black;
+        &:hover {
+            background-color: darken($primary, 5%);
+        }
+        &.selected {
+            background-color: darken($primary, 30%);
+        }
+        &.home-icon, &.profile-settings {
+            padding: 0;
+        }
+    }
+
+    .nav-left {
+        float: left;
+    }
+    .nav-right {
+        float: right;
+    }
+    .profile {
+        padding: 0.5rem 1.5rem;
+        p {
+            display: inline;
+            padding: 10px 5px;
+        }
+    }
+
+}

@@ -1,0 +1,54 @@
+.login-page {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  height: 100vh;
+  -webkit-transition: 0.25s;
+  transition: 0.25s;
+  @media (max-width: 1199.98px) {
+
+  }
+  @media (max-width: 991.98px) {
+    grid-template-columns: 50% 50%;
+  }
+  @media (max-width: 767.98px) {
+  
+  }
+  @media (max-width: 575.98px) {	
+    grid-template-columns: 100%;
+  }
+  .landing-img {
+    background-color: $primary;
+    @media (max-width: 575.98px) {
+      display: none;
+    }
+  }
+  .login-form {
+    display: table;
+    .login-details {
+      padding: 0 30px;
+      display: table-cell;
+      vertical-align: middle;
+      form {
+        input {
+          width: 100%;
+          padding: 15px 20px;
+          margin: 15px 0;
+          box-sizing: border-box;
+          border: 2px solid $black;
+          border-radius: 10px;
+          -webkit-transition: 0.25s;
+          transition: 0.25s;
+          outline: none;
+          &:focus {
+            border: 2px solid $primary;
+          }
+        }
+      }
+      .forget-pwd {
+        padding: 1rem 0;
+        text-align: center;
+      }
+    }
+
+  }
+}
