@@ -1,11 +1,13 @@
-import React from "react";
+import React, { Component } from 'react';
 
-const Adjustments = () => {
-    return (
-        <div>
-            <h1>Adjustments</h1>
-        </div>
-    )
+class Adjustments extends Component {
+    render() {
+        return (
+            <div>
+                <h1>Adjustments</h1>
+            </div>
+        );
+    }
 }
 
 export default Adjustments;
