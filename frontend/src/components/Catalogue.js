@@ -7,7 +7,7 @@ const Catalogue = () => {
     return (
         <div>
             <h1>Catalogue</h1>
-            <div className="card-grids-media four-cards retain-two">
+            <div className="card-grids-media four-cards retain-two grid-link">
                 <Link to="/catalogue/parts">
                 <div className="grid-card">
                     <p>Parts</p>

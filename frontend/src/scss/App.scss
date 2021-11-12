@@ -1,4 +1,7 @@
-@import './Colors';
+@import './Customise';
+@import './LoginPage';
+@import './NavBar';
+@import './ListsAndGrids';
 
 body {
   margin: 0;
@@ -8,24 +11,37 @@ body {
 }
 
 .App {
-  padding: 0.5rem 1.5rem;
+  padding: 1rem 1.5rem;
 }
 
 // The following are breaking points template
+
+// x-large devices, large desktops
+@media (max-width: 1399.98px) {
+
+}
+
+// large devices, desktops
 @media (max-width: 1199.98px) {
 
 }
+// medium device, tablets
 @media (max-width: 991.98px) {
 
 }
+// small devices, landscape phones
 @media (max-width: 767.98px) {
 
 }
+// x-small devices, portrait phones
 @media (max-width: 575.98px) {	
 
 }
 
-@import './Buttons';
-@import './LoginPage';
-@import './NavBar';
-@import './ListsAndGrids';
+
+// This must be placed at last or else the UI library will not be imported correctly
+// guide on using Bootstrap https://getbootstrap.com/
+
+@import '~bootstrap/scss/bootstrap.scss';
+
+// end of App.scss file

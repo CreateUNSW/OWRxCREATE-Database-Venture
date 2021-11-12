@@ -1,0 +1,14 @@
+// Overwrite any variables defined by Bootstrap
+// checkout the following for more informations
+// https://getbootstrap.com/docs/5.1/customize/sass/#variable-defaults
+// https://github.com/twbs/bootstrap/blob/main/scss/_variables.scss
+
+// Default Black & White, do not modify
+$black: #000000;
+$white: #FFFFFF;
+
+// Overwrite Variables
+$primary: #CCEAFF;
+$link-color: #0d6efd;
+$success: #47B802;
+$danger: #FB002D;

@@ -1,24 +1,24 @@
 .card-grids {
     display: grid;
-    grid-gap: 20px;
+    grid-gap: 1rem;
     padding: 0px;
     img {
         display: block;
         width: 100%;
         height: auto;
-        margin: 0px auto;
+        margin: 0 auto;
     }
 }
 
 .card-grids-media {
     display: grid;
-    grid-gap: 20px;
-    padding: 0px;
+    grid-gap: 1rem;
+    padding: 0;
     img {
         display: block;
         width: 100%;
         height: auto;
-        margin: 0px auto;
+        margin: 0 auto;
         @media (max-width: 575.98px) {
             width: 30%;
             height: auto;
@@ -66,14 +66,21 @@
         transition: 0.25s;
         display: flex;
         flex-direction: column;
-        border: 2px solid $primary;
+        border: 0.2rem solid $primary;
         border-radius: 1rem;
         flex: 1 1 auto;
-        min-height: 1px;
+        min-height: 1rem;
         padding: 1.25rem;
         text-align: center;
         &:hover {
-            transform: translate(0px,-5px);
+            transform: translate(0 ,-0.2rem);
+        }
+    }
+    &.grid-link a{
+        color: $black!important;
+        text-decoration: none;
+        &:hover {
+            color: $black;
         }
     }
 }

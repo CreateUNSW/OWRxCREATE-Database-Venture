@@ -30,6 +30,7 @@
         color: $black;
         &:hover {
             background-color: darken($primary, 5%);
+            color: $black;
         }
         &.selected {
             background-color: darken($primary, 30%);

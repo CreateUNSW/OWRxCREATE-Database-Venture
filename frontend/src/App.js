@@ -42,7 +42,6 @@ const AppLayoutRoute = ({ component: Component, ...rest }) => {
   );
 };
 
-
 class App extends Component {
   render() {
     return (

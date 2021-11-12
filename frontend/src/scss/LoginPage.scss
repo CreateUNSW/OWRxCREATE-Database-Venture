@@ -28,25 +28,15 @@
       padding: 0 30px;
       display: table-cell;
       vertical-align: middle;
-      form {
-        input {
-          width: 100%;
-          padding: 15px 20px;
-          margin: 15px 0;
-          box-sizing: border-box;
-          border: 2px solid $black;
-          border-radius: 10px;
-          -webkit-transition: 0.25s;
-          transition: 0.25s;
-          outline: none;
-          &:focus {
-            border: 2px solid $primary;
-          }
-        }
+      h1 {
+        padding: 2rem 0;
       }
       .forget-pwd {
         padding: 1rem 0;
         text-align: center;
+        a {
+          color: $black;
+        }
       }
     }
 
