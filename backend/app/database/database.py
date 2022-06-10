@@ -12,10 +12,6 @@ dbPass = os.getenv('DATABASE_PASSWORD')
 dbHost = "localhost"
 DATABASE_URL = f'postgresql+psycopg2://{dbUser}:{dbPass}@{dbHost}/{databaseName}'
 
-import psycopg2
-conn = psycopg2.connect(f"host={dbHost} dbname={databaseName} user={dbUser} password={dbPass}")
-
-
 engine = create_engine(DATABASE_URL)
 engine.connect()
 
